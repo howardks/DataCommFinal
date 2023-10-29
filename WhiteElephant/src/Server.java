@@ -1,8 +1,6 @@
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -33,24 +31,26 @@ class Handler extends Thread {
 
 	public void run() {
 		try {
-			// Read input data from the socket
-			InputStream is = socket.getInputStream();
-			BufferedReader br = new BufferedReader(new InputStreamReader(is));
-			String line = br.readLine();
+			// Structures for sending output to the client
+			PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
-			// All of our specific stuff will go here
+			// Structures for receiving input from the server
+			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-			// We will need to parse the JSON with Gson
+			// Send output to client
+			out.println("Enter name: ");
 
-			// Output the temperature string through the same socket
-			OutputStream os = socket.getOutputStream();
-			PrintWriter pw = new PrintWriter(os);
-			pw.println(""); // This will be what we are sending back to the server
+			// Read and display input data from client
+			String name = in.readLine();
+			System.out.println("Client sent name: " + name);
+
+			// Send output to client
+			out.println("You are " + name);
 
 			// Cleanup
-			pw.flush();
-			pw.close();
-			br.close();
+			out.flush();
+			out.close();
+			in.close();
 			socket.close();
 		} catch (Exception ex) {
 			ex.printStackTrace();
