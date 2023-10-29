@@ -1,37 +1,26 @@
-import java.util.ArrayList;
 
 public class User {
-	private String username;
-	private String password;
-	private ArrayList<String> inventory;
+	private String name;
+	private String currentGift;
 	
-	public User(String username, String password) {
-		setUsername(username);
-		setPassword(password);
-		setInventory(new ArrayList<>());
+	public User(String name) {
+		setName(name);
+		setCurrentGift("");
 	}
 
-	public String getUsername() {
-		return username;
+	public String getName() {
+		return name;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public String getPassword() {
-		return password;
+	public String getCurrentGift() {
+		return currentGift;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public ArrayList<String> getInventory() {
-		return inventory;
-	}
-
-	public void setInventory(ArrayList<String> inventory) {
-		this.inventory = inventory;
+	public void setCurrentGift(String currentGift) {
+		this.currentGift = currentGift;
 	}
 }
