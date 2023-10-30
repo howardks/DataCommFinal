@@ -7,6 +7,11 @@ public class User {
 		setName(name);
 		setCurrentGift("");
 	}
+	
+	@Override
+	public String toString() {
+		return getName();
+	}
 
 	public String getName() {
 		return name;
