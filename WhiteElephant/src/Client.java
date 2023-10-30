@@ -23,10 +23,22 @@ public class Client {
 		String name = userInput.readLine().trim();
 		out.println(name);
 		out.flush();
-
+		
 		// Read and display input from server
 		line = in.readLine();
 		System.out.println(line);
+		
+		// Accept and send output to server
+		String gift = userInput.readLine().trim();
+		out.println(gift);
+		out.flush();
+		
+		// Gameloop
+		while (!Game.gameOver) {
+			// Currently only reads and displays input from server forever
+			line = in.readLine();
+			System.out.println(line);
+		}
 
 		// Cleanup
 		in.close();
