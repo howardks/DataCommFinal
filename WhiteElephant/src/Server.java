@@ -33,6 +33,14 @@ public class Server {
         	client.sendMessage(message);
         }
     }
+	
+	public static void broadcastMessageExclusive(String message, Handler self) {
+        for (Handler client : clients) {
+        	if (client != self) {        		
+        		client.sendMessage(message);
+        	}
+        }
+    }
 
 	class Handler extends Thread {
 		Socket socket;
@@ -59,6 +67,7 @@ public class Server {
 				self = new User(name);
 				System.out.println("Client sent name: " + name);
 				Game.users.add(self);
+				Server.broadcastMessageExclusive("User " + self.getName() + " joined", this);
 				
 				// Send output to client
 				out.println("Enter gift: ");
@@ -67,16 +76,15 @@ public class Server {
 				String gift = in.readLine();
 				System.out.println("Client " + self.getName() + " sent gift: " + gift);
 				Game.gifts.add(gift);
+				Server.broadcastMessageExclusive("User " + self.getName() + " added a gift to the gift pile", this);
 
-				// Send output to client
-				out.println("You are " + name);
-				out.println("Users: " + Arrays.toString(Game.users.toArray()));
-				out.println("Gifts: " + Arrays.toString(Game.gifts.toArray()));
+				// Send output to client when other users join
 				
 				// Let client know we are waiting on more users to connect
-				while (Game.users.size() < 3) {
-					Server.broadcastMessage("Current number of users: " + Game.users.size());
-					Server.broadcastMessage("Waiting for " + (3 - Game.users.size()) + " more users");
+				int numUsersRequired = 3;
+				while (Game.gifts.size() < numUsersRequired) {
+					Server.broadcastMessage("Current number of users: " + Game.gifts.size());
+					Server.broadcastMessage("Waiting for " + (numUsersRequired - Game.gifts.size()) + " more users");
 					TimeUnit.SECONDS.sleep(5);
 				}
 				
@@ -86,11 +94,11 @@ public class Server {
 				
 				// Gameloop
 				while (!Game.gameOver) {
-					// Currently junk data
-					if (Game.users.size() == 3) {
-						Server.broadcastMessage("" + Game.users.size());
-						TimeUnit.SECONDS.sleep(1);
-					}
+//					// Currently junk data
+//					if (Game.users.size() == 3) {
+//						Server.broadcastMessage("" + Game.users.size());
+//						TimeUnit.SECONDS.sleep(1);
+//					}
 				}
 
 				// Cleanup
