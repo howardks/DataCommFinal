@@ -9,8 +9,6 @@ public class Server {
 	private static ArrayList<Handler> clients = new ArrayList<>();
 
 	public static void main(String[] args) {
-		Server s = new Server();
-		
 		try (ServerSocket server = new ServerSocket(5332)) {
 			while (true) {
 				Socket socket = server.accept();
