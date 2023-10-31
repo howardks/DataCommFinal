@@ -16,7 +16,19 @@ public class Client {
 		BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
 		PrintWriter out = new PrintWriter(socket.getOutputStream());
 
+		// Perform login tasks
+		String serverText = in.readLine();
+		System.out.println(serverText);
+		String name = userInput.readLine().trim();
+		out.println(name);
+		out.flush();
+		serverText = in.readLine();
+		System.out.println(serverText);
+		String gift = userInput.readLine().trim();
+		out.println(gift);
+		out.flush();
 		
+		// 
 
 		// Cleanup
 		in.close();

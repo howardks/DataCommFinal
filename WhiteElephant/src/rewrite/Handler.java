@@ -7,6 +7,8 @@ import java.net.Socket;
 
 public class Handler extends Thread {
 	Socket socket;
+	User user;
+	
 	
 	public Handler(Socket socket) {
 		this.socket = socket;
@@ -20,7 +22,8 @@ public class Handler extends Thread {
 			// Structures for receiving input from the server
 			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-			
+			// Perform login tasks
+			user = Game.login(out, in);
 
 			// Cleanup
 			out.flush();
