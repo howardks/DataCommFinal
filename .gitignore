@@ -1,3 +1,4 @@
 /.metadata/
 WhiteElephant/.settings/org.eclipse.jdt.core.prefs
 WhiteElephant/.classpath
+WhiteElephant/src/williams/*.*
