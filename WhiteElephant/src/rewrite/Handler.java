@@ -7,8 +7,6 @@ import java.net.Socket;
 
 public class Handler extends Thread {
 	Socket socket;
-
-	PrintWriter out;
 	
 	public Handler(Socket socket) {
 		this.socket = socket;
@@ -17,7 +15,7 @@ public class Handler extends Thread {
 	public void run() {
 		try {
 			// Structures for sending output to the client
-			out = new PrintWriter(socket.getOutputStream(), true);
+			PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
 			// Structures for receiving input from the server
 			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
