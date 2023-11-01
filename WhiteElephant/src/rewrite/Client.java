@@ -27,8 +27,20 @@ public class Client {
 		String gift = userInput.readLine().trim();
 		out.println(gift);
 		out.flush();
-		
-		// 
+
+		// GameLoop
+		while (!Game.gameOver) {
+			serverText = in.readLine();
+			System.out.println(serverText);
+
+			// Accepting input is not working here
+			if (Game.wantsInput) {
+				String responseText = userInput.readLine().trim();
+				out.println(responseText);
+				out.flush();
+
+			}
+		}
 
 		// Cleanup
 		in.close();

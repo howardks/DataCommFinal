@@ -6,7 +6,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 public class Server {
-	private static ArrayList<Handler> clients = new ArrayList<>();
+	static ArrayList<Handler> clients = new ArrayList<>();
 
 	public static void main(String[] args) {
 		try (ServerSocket server = new ServerSocket(5332)) {
@@ -22,4 +22,10 @@ public class Server {
 			System.out.println("There was an error");
 		}
 	}
+	
+	public static void broadcastMessage(String message) {
+        for (Handler client : clients) {
+        	client.sendMessage(message);
+        }
+    }
 }
