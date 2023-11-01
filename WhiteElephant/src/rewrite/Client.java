@@ -33,13 +33,11 @@ public class Client {
 			serverText = in.readLine();
 			System.out.println(serverText);
 
-			// Accepting input is not working here
-			if (Game.wantsInput) {
-				String responseText = userInput.readLine().trim();
-				out.println(responseText);
-				out.flush();
+			// TODO: Accepting input is not working here
+			String responseText = userInput.readLine().trim();
+			out.println(responseText);
+			out.flush();
 
-			}
 		}
 
 		// Cleanup

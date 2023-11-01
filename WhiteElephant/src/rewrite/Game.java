@@ -12,7 +12,6 @@ public class Game {
 	static boolean gameOver = false;
 	static String action;
 	static int numSteals = 0;
-	static boolean wantsInput = false;
 	
 	public static User login(PrintWriter out, BufferedReader in) throws Exception {
 		// Send output to client
@@ -43,9 +42,7 @@ public class Game {
 			
 			while (!choice.equals("choose") || !choice.equals("steal")) {
 				out.println("Would you like to choose a gift or steal a gift (input \"choose\" or \"steal\")?");
-				Game.wantsInput = true;
 				choice = in.readLine().trim().toLowerCase();
-				Game.wantsInput = false;
 				
 				switch (choice) {
 				case "choose":
@@ -67,14 +64,12 @@ public class Game {
 		Game.action = "giftChoice";
 		out.println("Choose a gift from the gift pile (input an integer between 0 and " + (gifts.size() - 1) + "): ");
 		
-		// Accepting input is not working here
-		Game.wantsInput = true;
+		// TODO: Accepting input is not working here
 		int giftNum = Integer.parseInt(in.readLine().trim());
-		Game.wantsInput = false;
 		user.setCurrentGift(gifts.get(giftNum));
 		Game.gifts.remove(giftNum);
 		
-		// TODO: Broadcast gift to all clients here
+		// Broadcast gift to all clients
 		Server.broadcastMessage(user.getName() + " opened " + user.getCurrentGift());
 	}
 	
