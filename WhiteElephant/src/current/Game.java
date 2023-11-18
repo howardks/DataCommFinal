@@ -78,20 +78,27 @@ public class Game {
 	public static void chooseGift(Player player, PrintWriter out, BufferedReader in) throws Exception {
 		Game.lastStolen = "";
 
-		// TODO: Implement error checking for numbers outside of range
-		out.println("Choose a gift from the gift pile (input an integer between 0 and " + (gifts.size() - 1) + "): ");
-		int giftNum = Integer.parseInt(in.readLine().trim());
+		int giftNum = -1;
+		
+		while (giftNum < 0 || giftNum > gifts.size() - 1) {
+			out.println("Choose a gift from the gift pile (input an integer between 0 and " + (gifts.size() - 1) + "): ");
+			giftNum = Integer.parseInt(in.readLine().trim());
+			
+			if (giftNum < 0 || giftNum > gifts.size() - 1) {
+				out.println("Input an integer between 0 and " + (gifts.size() - 1));
+			}
+		}
 		player.setCurrentGift(gifts.get(giftNum));
 		Game.gifts.remove(giftNum);
 
-		out.println(String.format("Player %s opened %s", player.getName(), player.getCurrentGift()));
+		out.println(String.format("Player %s opened a gift containing %s", player.getName(), player.getCurrentGift()));
 		Game.currentPlayerNum = (Game.currentPlayerNum == Game.players.size() - 1) ? 0 : Game.currentPlayerNum + 1;
 	}
 
 	public static void stealGift(Player player, PrintWriter out, BufferedReader in) throws Exception {
 		printStealableGifts(player, out);
+		
 		out.println("Who would you like to steal from? (input the player's name): ");
-
 		String victimName = in.readLine().trim().toLowerCase();
 
 		while (victimName.equals(lastStolen)) {
@@ -131,6 +138,7 @@ public class Game {
 				return false;
 			}
 		}
+		
 		out.println();
 		out.println("Results: ");
 		printGifts(out);
