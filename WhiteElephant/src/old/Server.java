@@ -1,4 +1,4 @@
-package rewrite;
+package old;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -9,6 +9,7 @@ public class Server {
 	static ArrayList<Handler> clients = new ArrayList<>();
 
 	public static void main(String[] args) {
+		System.out.println("Server is running on port 5332");
 		try (ServerSocket server = new ServerSocket(5332)) {
 			while (true) {
 				Socket socket = server.accept();

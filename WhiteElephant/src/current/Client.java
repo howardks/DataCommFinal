@@ -1,4 +1,4 @@
-package rewrite;
+package current;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -32,12 +32,6 @@ public class Client {
 		while (!Game.gameOver) {
 			serverText = in.readLine();
 			System.out.println(serverText);
-
-			// TODO: Accepting input is not working here
-			String responseText = userInput.readLine().trim();
-			out.println(responseText);
-			out.flush();
-
 		}
 
 		// Cleanup

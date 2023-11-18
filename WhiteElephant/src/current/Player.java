@@ -1,13 +1,14 @@
+package current;
 
-public class User {
+public class Player {
 	private String name;
 	private String currentGift;
-	
-	public User(String name) {
+
+	public Player(String name) {
 		setName(name);
 		setCurrentGift("");
 	}
-	
+
 	@Override
 	public String toString() {
 		return getName();
