@@ -5,7 +5,7 @@ public class Player {
 	private String currentGift;
 
 	public Player(String name) {
-		setName(name);
+		setName(name.toLowerCase());
 		setCurrentGift("");
 	}
 

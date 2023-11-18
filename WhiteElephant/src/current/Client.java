@@ -25,6 +25,8 @@ public class Client {
 		// Set id
 		String serverText = in.readLine();
 		Client self = new Client(Integer.parseInt(serverText));
+		serverText = in.readLine();
+		System.out.println(serverText);
 		
 		// Perform login tasks
 		serverText = in.readLine();
@@ -44,8 +46,7 @@ public class Client {
 				serverText = in.readLine();
 				System.out.println(serverText);	
 				
-				if (serverText.startsWith("Choose") || serverText.startsWith("Would")) {
-					System.out.println("Give input now");
+				if (serverText.startsWith("Choose") || serverText.startsWith("Would") || serverText.startsWith("Who")) {
 					String responseText = userInput.readLine().trim();
 					out.println(responseText);
 					out.flush();

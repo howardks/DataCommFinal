@@ -55,8 +55,7 @@ public class Handler extends Thread {
 			try {
 				out.close();
 				in.close();
-			} catch (IOException e) {
-			}
+			} catch (IOException e) { }
 		}
 	}
 	
