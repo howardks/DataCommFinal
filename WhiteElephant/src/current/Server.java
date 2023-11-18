@@ -15,6 +15,7 @@ public class Server {
 			while (true) {
 				Socket socket = server.accept();
 				Handler handler = new Handler(socket);
+				System.out.println(String.format("Client %d connected.", handler.myId));
 				clients.add(handler);
 				handler.start();
 			}

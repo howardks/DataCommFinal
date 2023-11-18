@@ -6,6 +6,12 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class Client {
+	int id;
+	
+	public Client(int id) {
+		this.id = id;
+	}
+	
 	public static void main(String[] args) throws Exception {
 		Socket socket = new Socket("localhost", 5332);
 
@@ -16,8 +22,12 @@ public class Client {
 		BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
 		PrintWriter out = new PrintWriter(socket.getOutputStream());
 
-		// Perform login tasks
+		// Set id
 		String serverText = in.readLine();
+		Client self = new Client(Integer.parseInt(serverText));
+		
+		// Perform login tasks
+		serverText = in.readLine();
 		System.out.println(serverText);
 		String name = userInput.readLine().trim();
 		out.println(name);
@@ -30,8 +40,18 @@ public class Client {
 
 		// GameLoop
 		while (!Game.gameOver) {
-			serverText = in.readLine();
-			System.out.println(serverText);
+			while (in.ready()) {
+				serverText = in.readLine();
+				System.out.println(serverText);	
+				
+				if (serverText.startsWith("Choose") || serverText.startsWith("Would")) {
+					System.out.println("Give input now");
+					String responseText = userInput.readLine().trim();
+					out.println(responseText);
+					out.flush();
+				} 
+			}
+			
 		}
 
 		// Cleanup
