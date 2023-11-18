@@ -1,4 +1,4 @@
-
+package old;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -32,7 +32,7 @@ public class Handler extends Thread {
 			
 			// GameLoop
 			while (!Game.gameOver) {
-				if (myId == Game.turn) {
+				if (myId == Game.turn % Game.users.size()) {
 					Game.takeTurn(user, out, in);
 				}
 			}
