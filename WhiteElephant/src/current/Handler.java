@@ -24,6 +24,9 @@ public class Handler extends Thread {
 		
 		// Structures for receiving input from the server
 		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		
+		// Send Client its id
+		out.println(myId);
 	}
 
 	@Override
@@ -48,6 +51,12 @@ public class Handler extends Thread {
 
 		} catch (Exception ex) {
 
+		} finally {
+			try {
+				out.close();
+				in.close();
+			} catch (IOException e) {
+			}
 		}
 	}
 	
