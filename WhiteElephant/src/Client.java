@@ -1,10 +1,11 @@
+
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
 public class Client {
-
 	public static void main(String[] args) throws Exception {
 		Socket socket = new Socket("localhost", 5332);
 
@@ -15,29 +16,28 @@ public class Client {
 		BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
 		PrintWriter out = new PrintWriter(socket.getOutputStream());
 
-		// Read and display input from server
-		String line = in.readLine();
-		System.out.println(line);
-
-		// Accept and send output to server
+		// Perform login tasks
+		String serverText = in.readLine();
+		System.out.println(serverText);
 		String name = userInput.readLine().trim();
 		out.println(name);
 		out.flush();
-		
-		// Read and display input from server
-		line = in.readLine();
-		System.out.println(line);
-		
-		// Accept and send output to server
+		serverText = in.readLine();
+		System.out.println(serverText);
 		String gift = userInput.readLine().trim();
 		out.println(gift);
 		out.flush();
-		
-		// Gameloop
+
+		// GameLoop
 		while (!Game.gameOver) {
-			// Currently only reads and displays input from server forever
-			line = in.readLine();
-			System.out.println(line);
+			serverText = in.readLine();
+			System.out.println(serverText);
+
+			// TODO: Accepting input is not working here
+			String responseText = userInput.readLine().trim();
+			out.println(responseText);
+			out.flush();
+
 		}
 
 		// Cleanup
@@ -46,5 +46,4 @@ public class Client {
 		out.close();
 		socket.close();
 	}
-
 }
