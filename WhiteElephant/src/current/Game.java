@@ -9,7 +9,7 @@ public class Game {
 	static ArrayList<Player> players = new ArrayList<>();
 	static ArrayList<String> gifts = new ArrayList<>();
 	static boolean gameOver = false;
-	static int turn = 1;
+	static int turn = 3;
 
 	public static Player login(PrintWriter out, BufferedReader in) throws Exception {
 		// Send output to client
@@ -34,14 +34,12 @@ public class Game {
 			throws InterruptedException {
 		//Server.sendMessage(""+turn);
 		if (turn % players.size() == (players.indexOf(player))) {
-			Server.sendMessage(""+turn);
 			Server.sendMessage(String.format("Turn %d: player %s", turn, player.getName()));
 			turn++;
-			Server.sendMessage(""+turn);
 			TimeUnit.SECONDS.sleep(2);
 		}
 
-		if (turn == 20) {
+		if (turn == 10) {
 			gameOver = true;
 		}
 	}
