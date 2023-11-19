@@ -1,11 +1,17 @@
+package old;
 
 public class User {
 	private String name;
 	private String currentGift;
-	
+
 	public User(String name) {
 		setName(name);
 		setCurrentGift("");
+	}
+
+	@Override
+	public String toString() {
+		return getName();
 	}
 
 	public String getName() {
