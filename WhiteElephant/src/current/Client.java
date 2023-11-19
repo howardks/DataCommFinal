@@ -7,11 +7,11 @@ import java.net.Socket;
 
 public class Client {
 	int id;
-	
+
 	public Client(int id) {
 		this.id = id;
 	}
-	
+
 	public static void main(String[] args) throws Exception {
 		Socket socket = new Socket("localhost", 5332);
 
@@ -22,37 +22,27 @@ public class Client {
 		BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
 		PrintWriter out = new PrintWriter(socket.getOutputStream());
 
-		// Set id
-		String serverText = in.readLine();
-		Client self = new Client(Integer.parseInt(serverText));
-		serverText = in.readLine();
-		System.out.println(serverText);
-		
-		// Perform login tasks
-		serverText = in.readLine();
-		System.out.println(serverText);
-		String name = userInput.readLine().trim();
-		out.println(name);
-		out.flush();
-		serverText = in.readLine();
-		System.out.println(serverText);
-		String gift = userInput.readLine().trim();
-		out.println(gift);
-		out.flush();
+		String serverText;
 
 		// GameLoop
 		while (!Game.gameOver) {
 			while (in.ready()) {
 				serverText = in.readLine();
-				System.out.println(serverText);	
-				
-				if (serverText.startsWith("Choose") || serverText.startsWith("Would") || serverText.startsWith("Who")) {
+
+				if (serverText.startsWith("ID: ")) {
+					int id = Integer.parseInt(serverText.split(" ")[1]);
+					Client self = new Client(id);
+				} else {
+					System.out.println(serverText);
+				}
+
+				if (serverText.startsWith("Choose") || serverText.startsWith("Would") || serverText.startsWith("Who")
+						|| serverText.startsWith("Enter")) {
 					String responseText = userInput.readLine().trim();
 					out.println(responseText);
 					out.flush();
-				} 
+				}
 			}
-			
 		}
 
 		// Cleanup

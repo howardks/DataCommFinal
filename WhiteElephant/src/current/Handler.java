@@ -21,12 +21,12 @@ public class Handler extends Thread {
 		id++;
 		// Structures for sending output to the client
 		out = new PrintWriter(socket.getOutputStream(), true);
-		
+
 		// Structures for receiving input from the server
 		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		
+
 		// Send Client its id
-		out.println(myId);
+		out.println("ID: " + myId);
 	}
 
 	@Override
@@ -35,17 +35,17 @@ public class Handler extends Thread {
 
 			// Perform login tasks
 			player = Game.login(out, in);
-			
+
 			while (Game.gifts.size() < 3) {
 				Server.sendMessage(String.format("Waiting on %d more players to join...", 3 - Game.players.size()));
-				TimeUnit.SECONDS.sleep(8);
+				TimeUnit.SECONDS.sleep(5);
 			}
-			
+
 			sendMessage("Starting game!");
-			TimeUnit.SECONDS.sleep(3);
+			TimeUnit.SECONDS.sleep(1);
 
 			// GameLoop
-			while (!Game.gameOver) {				
+			while (!Game.gameOver) {
 				Game.takeTurn(player, out, in);
 			}
 
@@ -55,10 +55,11 @@ public class Handler extends Thread {
 			try {
 				out.close();
 				in.close();
-			} catch (IOException e) { }
+			} catch (IOException e) {
+			}
 		}
 	}
-	
+
 	public void sendMessage(String message) {
 		out.println(message);
 	}
