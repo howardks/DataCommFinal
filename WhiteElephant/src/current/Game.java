@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Game {
 	static ArrayList<Player> players = new ArrayList<>();
+	static ArrayList<String> playerNames = new ArrayList<>();
 	static ArrayList<String> gifts = new ArrayList<>();
 	static boolean gameOver = false;
 	static int currentPlayerNum = 0;
@@ -20,9 +21,15 @@ public class Game {
 		out.println("Enter name: ");
 
 		// Read and display input data from client
-		String name = in.readLine();
-		Player user = new Player(name);
-		Game.players.add(user);
+		String name = in.readLine().toLowerCase();
+		while (playerNames.contains(name)) {
+			out.println("Name already in use, choose a different name");
+			out.println("Enter name: ");
+			name = in.readLine().toLowerCase();
+		}
+		playerNames.add(name);
+		Player player = new Player(name);
+		Game.players.add(player);
 
 		// Send output to client
 		out.println("Enter gift: ");
@@ -31,7 +38,7 @@ public class Game {
 		String gift = in.readLine();
 		Game.gifts.add(gift);
 
-		return user;
+		return player;
 	}
 
 	public static synchronized void takeTurn(Player player, PrintWriter out, BufferedReader in) throws Exception {
@@ -78,58 +85,91 @@ public class Game {
 	public static void chooseGift(Player player, PrintWriter out, BufferedReader in) throws Exception {
 		Game.lastStolen = "";
 
-		int giftNum = -1;
-		
-		while (giftNum < 0 || giftNum > gifts.size() - 1) {
-			out.println("Choose a gift from the gift pile (input an integer between 0 and " + (gifts.size() - 1) + "): ");
-			giftNum = Integer.parseInt(in.readLine().trim());
-			
-			if (giftNum < 0 || giftNum > gifts.size() - 1) {
-				out.println("Input an integer between 0 and " + (gifts.size() - 1));
-			}
-		}
-		player.setCurrentGift(gifts.get(giftNum));
-		Game.gifts.remove(giftNum);
+		String choiceStr = "Choose a gift from the gift pile (input an integer between 0 and " + (gifts.size() - 1)
+				+ ((turn == 0) ? "): " : " or \"steal\" to steal a gift instead): ");
 
-		out.println(String.format("Player %s opened a gift containing %s", player.getName(), player.getCurrentGift()));
-		Game.currentPlayerNum = (Game.currentPlayerNum == Game.players.size() - 1) ? 0 : Game.currentPlayerNum + 1;
+		out.println(choiceStr);
+
+		String giftStr = in.readLine().toLowerCase().trim();
+
+		if (turn != 0 && giftStr.equals("steal")) {
+			Game.stealGift(player, out, in);
+		} else {
+
+			int giftNum = -1;
+			while ((giftNum < 0 || giftNum > gifts.size() - 1)) {
+				if (giftStr.matches("-?\\d+")) {
+					out.println("matches part");
+					giftNum = Integer.parseInt(giftStr);
+
+					if (giftNum < 0 || giftNum > gifts.size() - 1) {
+						out.println("Input an integer between 0 and " + (gifts.size() - 1));
+						out.println(choiceStr);
+						giftStr = in.readLine().toLowerCase().trim();
+					}
+				} else if (turn != 0 && giftStr.equals("steal")) {
+					out.println("steal part");
+					Game.stealGift(player, out, in);
+				} else {
+					out.println("else part");
+					out.println("Input an integer between 0 and " + (gifts.size() - 1));
+					out.println(choiceStr);
+					giftStr = in.readLine().toLowerCase().trim();
+				}
+				out.println("nothing part");
+			}
+			player.setCurrentGift(gifts.get(giftNum));
+			Game.gifts.remove(giftNum);
+
+			Server.sendMessage(
+					String.format("Player %s opened a gift containing %s", player.getName(), player.getCurrentGift()));
+			Game.currentPlayerNum = (Game.currentPlayerNum == Game.players.size() - 1) ? 0 : Game.currentPlayerNum + 1;
+		}
 	}
 
 	public static void stealGift(Player player, PrintWriter out, BufferedReader in) throws Exception {
-		printStealableGifts(player, out);
-		
-		out.println("Who would you like to steal from? (input the player's name): ");
+		ArrayList<String> stealablePlayerNames = printStealableGifts(player, out);
+
+		out.println(
+				"Who would you like to steal from? (input the player's name or \"choose\" to choose a gift instead): ");
 		String victimName = in.readLine().trim().toLowerCase();
 
-		while (victimName.equals(lastStolen)) {
+		while ((victimName.equals(lastStolen) || !stealablePlayerNames.contains(victimName))
+				&& !victimName.equals("choose")) {
 			out.println("You cannot steal from " + victimName);
-			out.println("Who would you like to steal from? (input the player's name): ");
+			out.println(
+					"Who would you like to steal from? (input the player's name or \"choose\" to choose a gift instead): ");
 			victimName = in.readLine().trim().toLowerCase();
 		}
 
-		int index = -1;
+		if (victimName.equals("choose")) {
+			Game.chooseGift(player, out, in);
+		} else {
 
-		while (index == -1) {
+			int index = -1;
 
-			for (Player victim : players) {
-				if (victim.getName().toLowerCase().equals(victimName)) {
-					index = players.indexOf(victim);
+			while (index == -1) {
+
+				for (Player victim : players) {
+					if (victim.getName().toLowerCase().equals(victimName)) {
+						index = players.indexOf(victim);
+					}
+				}
+
+				if (index != -1) {
+					player.setCurrentGift(Game.players.get(index).getCurrentGift());
+					Game.players.get(index).setCurrentGift("");
+					Server.sendMessage(String.format("Player %s stole Player %s's %s!", player.getName(), victimName,
+							player.getCurrentGift()));
+					Game.lastStolen = player.getName();
+					Game.currentPlayerNum = index;
+				} else {
+					out.println("Please input the player's name: ");
 				}
 			}
 
-			if (index != -1) {
-				player.setCurrentGift(Game.players.get(index).getCurrentGift());
-				Game.players.get(index).setCurrentGift("");
-				Server.sendMessage(String.format("Player %s stole Player %s's %s!", player.getName(), victimName,
-						player.getCurrentGift()));
-				Game.lastStolen = player.getName();
-				Game.currentPlayerNum = index;
-			} else {
-				out.println("Please input the player's name: ");
-			}
+			Game.numSteals++;
 		}
-
-		Game.numSteals++;
 	}
 
 	public static boolean checkGameOver(PrintWriter out) {
@@ -138,7 +178,7 @@ public class Game {
 				return false;
 			}
 		}
-		
+
 		out.println();
 		out.println("Results: ");
 		printGifts(out);
@@ -160,13 +200,18 @@ public class Game {
 		return count;
 	}
 
-	public static void printStealableGifts(Player player, PrintWriter out) {
+	public static ArrayList<String> printStealableGifts(Player player, PrintWriter out) {
+		ArrayList<String> stealablePlayerNames = new ArrayList<>();
+
 		for (Player victim : Game.players) {
 			if (!victim.getCurrentGift().equals("") && !victim.getName().equals(Game.lastStolen)
 					&& !player.getName().equals(victim.getName())) {
 				out.println(String.format("Player %s's gift: %s", victim.getName(), victim.getCurrentGift()));
+				stealablePlayerNames.add(victim.getName());
 			}
 		}
+
+		return stealablePlayerNames;
 	}
 
 	public static void printGifts(PrintWriter out) {
