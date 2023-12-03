@@ -27,6 +27,7 @@ public class Client {
 		// GameLoop
 		while (!Game.gameOver) {
 			while (in.ready()) {
+				// Read in and display input from the server
 				serverText = in.readLine();
 
 				if (serverText.startsWith("ID: ")) {
@@ -36,6 +37,7 @@ public class Client {
 					System.out.println(serverText);
 				}
 
+				// Send output to the server when appropriate
 				if (serverText.startsWith("Choose") || serverText.startsWith("Would") || serverText.startsWith("Who")
 						|| serverText.startsWith("Enter")) {
 					String responseText = userInput.readLine().trim();

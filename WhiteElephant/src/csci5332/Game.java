@@ -42,17 +42,22 @@ public class Game {
 	}
 
 	public static synchronized void takeTurn(Player player, PrintWriter out, BufferedReader in) throws Exception {
-
+		// Only run while game is in progress
 		if (!checkGameOver(out)) {
+			// Only run for the player whose turn it is
 			if (currentPlayerNum == players.indexOf(player)) {
+				// Only run if this player does not have a gift
 				if (player.getCurrentGift().equals("")) {
 					Server.sendMessage(String.format("\nTurn %d: Player %s", turn, player.getName()));
 
 					if (Game.turn == 0 || Game.numSteals == 3 || Game.checkStealableGifts(player) == 0) {
+						// Player must choose a gift if it is the first turn, if numSteals is maxed out, 
+						// or if there are no players a gift can be stolen from
 						Game.chooseGift(player, out, in);
 					} else {
 						String choice = "";
 
+						// Let player choose or steal a gift
 						while (!choice.equals("choose") && !choice.equals("steal")) {
 							out.println(
 									"Would you like to choose a gift or steal a gift (input \"choose\" or \"steal\")?");
@@ -74,6 +79,7 @@ public class Game {
 					turn++;
 					TimeUnit.SECONDS.sleep(2);
 				} else {
+					// Move to next player if conditions are not met
 					Game.currentPlayerNum = (Game.currentPlayerNum == Game.players.size() - 1) ? 0
 							: Game.currentPlayerNum + 1;
 				}
@@ -82,18 +88,19 @@ public class Game {
 	}
 
 	public static void chooseGift(Player player, PrintWriter out, BufferedReader in) throws Exception {
+		// Let player choose a gift or switch to steal if possible
 		String choiceStr = "Choose a gift from the gift pile (input an integer between 0 and " + (gifts.size() - 1)
 				+ ((turn == 0 || Game.numSteals == 3 || Game.checkStealableGifts(player) == 0) ? "): "
 						: " or \"steal\" to steal a gift instead): ");
-
 		out.println(choiceStr);
 
 		String giftStr = in.readLine().toLowerCase().trim();
 
 		if (turn != 0 && Game.numSteals < 3 && Game.checkStealableGifts(player) > 0 && giftStr.equals("steal")) {
+			// Let player switch to steal if conditions are met
 			Game.stealGift(player, out, in);
 		} else {
-
+			// Allow player to choose their gift by index
 			int giftNum = -1;
 			while ((giftNum < 0 || giftNum > gifts.size() - 1)) {
 				if (giftStr.matches("-?\\d+")) {
@@ -117,6 +124,7 @@ public class Game {
 			player.setCurrentGift(gifts.get(giftNum));
 			Game.gifts.remove(giftNum);
 
+			// Send message output to all clients and move to next player
 			Server.sendMessage(
 					String.format("Player %s opened a gift containing %s", player.getName(), player.getCurrentGift()));
 			Game.numSteals = 0;
@@ -127,10 +135,12 @@ public class Game {
 	public static void stealGift(Player player, PrintWriter out, BufferedReader in) throws Exception {
 		ArrayList<String> stealablePlayerNames = printStealableGifts(player, out);
 
+		// Let player steal a gift or switch to choose
 		out.println(
 				"Who would you like to steal from? (input the player's name or \"choose\" to choose a gift instead): ");
 		String victimName = in.readLine().trim().toLowerCase();
 
+		// Do not let player steal from invalid other player
 		while ((victimName.equals(lastStolen) || !stealablePlayerNames.contains(victimName))
 				&& !victimName.equals("choose")) {
 			out.println("You cannot steal from " + victimName);
@@ -140,13 +150,13 @@ public class Game {
 		}
 
 		if (victimName.equals("choose")) {
+			// Let player switch to choose
 			Game.chooseGift(player, out, in);
 		} else {
-
+			// Allow player to steal a gift by other player's name
 			int index = -1;
 
 			while (index == -1) {
-
 				for (Player victim : players) {
 					if (victim.getName().toLowerCase().equals(victimName)) {
 						index = players.indexOf(victim);
@@ -170,6 +180,8 @@ public class Game {
 	}
 
 	public static boolean checkGameOver(PrintWriter out) {
+		// Check if all players have a gift
+		// If so, the game ends
 		for (Player player : Game.players) {
 			if (player.getCurrentGift().equals("")) {
 				return false;
@@ -185,6 +197,8 @@ public class Game {
 	}
 
 	public static int checkStealableGifts(Player player) {
+		// Check if there are any players that the current player
+		// can steal from
 		int count = 0;
 
 		for (Player victim : Game.players) {
@@ -198,6 +212,7 @@ public class Game {
 	}
 
 	public static ArrayList<String> printStealableGifts(Player player, PrintWriter out) {
+		// Print other players and their gifts that can be stolen
 		ArrayList<String> stealablePlayerNames = new ArrayList<>();
 
 		for (Player victim : Game.players) {
@@ -212,6 +227,7 @@ public class Game {
 	}
 
 	public static void printGifts(PrintWriter out) {
+		// Print all players and their gifts
 		for (Player player : Game.players) {
 			if (!player.getCurrentGift().equals("")) {
 				out.println(String.format("Player %s's gift: %s", player.getName(), player.getCurrentGift()));

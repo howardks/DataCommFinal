@@ -1,5 +1,10 @@
 package csci5332;
 
+/*
+ * This class allows each user's name and current gift
+ * to be tracked. 
+ */
+
 public class Player {
 	private String name;
 	private String currentGift;
