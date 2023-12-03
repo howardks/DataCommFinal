@@ -7,12 +7,13 @@ import java.util.ArrayList;
 
 public class Server {
 	static ArrayList<Handler> clients = new ArrayList<>();
+	static int totalPlayers = 4;
 
 	public static void main(String[] args) {
 		try (ServerSocket server = new ServerSocket(5332)) {
 			System.out.println("White Elephant server is running on port 5332...");
 
-			while (clients.size() < 3) {
+			while (clients.size() < Server.totalPlayers) {
 				Socket socket = server.accept();
 				Handler handler = new Handler(socket);
 				clients.add(handler);
