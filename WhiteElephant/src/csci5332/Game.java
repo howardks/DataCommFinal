@@ -1,4 +1,4 @@
-package current;
+package csci5332;
 
 import java.io.BufferedReader;
 import java.io.PrintWriter;
@@ -46,11 +46,10 @@ public class Game {
 		if (!checkGameOver(out)) {
 			if (currentPlayerNum == players.indexOf(player)) {
 				if (player.getCurrentGift().equals("")) {
-					Server.sendMessage(String.format("Turn %d: Player %s", turn, player.getName()));
+					Server.sendMessage(String.format("\nTurn %d: Player %s", turn, player.getName()));
 
 					if (Game.turn == 0 || Game.numSteals == 3 || Game.checkStealableGifts(player) == 0) {
 						Game.chooseGift(player, out, in);
-						Game.numSteals = 0;
 					} else {
 						String choice = "";
 
@@ -83,46 +82,44 @@ public class Game {
 	}
 
 	public static void chooseGift(Player player, PrintWriter out, BufferedReader in) throws Exception {
-		Game.lastStolen = "";
-
 		String choiceStr = "Choose a gift from the gift pile (input an integer between 0 and " + (gifts.size() - 1)
-				+ ((turn == 0) ? "): " : " or \"steal\" to steal a gift instead): ");
+				+ ((turn == 0 || Game.numSteals == 3 || Game.checkStealableGifts(player) == 0) ? "): "
+						: " or \"steal\" to steal a gift instead): ");
 
 		out.println(choiceStr);
 
 		String giftStr = in.readLine().toLowerCase().trim();
 
-		if (turn != 0 && giftStr.equals("steal")) {
+		if (turn != 0 && Game.numSteals < 3 && Game.checkStealableGifts(player) > 0 && giftStr.equals("steal")) {
 			Game.stealGift(player, out, in);
 		} else {
 
 			int giftNum = -1;
 			while ((giftNum < 0 || giftNum > gifts.size() - 1)) {
 				if (giftStr.matches("-?\\d+")) {
-					out.println("matches part");
 					giftNum = Integer.parseInt(giftStr);
 
 					if (giftNum < 0 || giftNum > gifts.size() - 1) {
 						out.println("Input an integer between 0 and " + (gifts.size() - 1));
 						out.println(choiceStr);
 						giftStr = in.readLine().toLowerCase().trim();
+						Game.lastStolen = "";
 					}
-				} else if (turn != 0 && giftStr.equals("steal")) {
-					out.println("steal part");
+				} else if (turn != 0 && Game.numSteals < 3 && Game.checkStealableGifts(player) > 0
+						&& giftStr.equals("steal")) {
 					Game.stealGift(player, out, in);
 				} else {
-					out.println("else part");
 					out.println("Input an integer between 0 and " + (gifts.size() - 1));
 					out.println(choiceStr);
 					giftStr = in.readLine().toLowerCase().trim();
 				}
-				out.println("nothing part");
 			}
 			player.setCurrentGift(gifts.get(giftNum));
 			Game.gifts.remove(giftNum);
 
 			Server.sendMessage(
 					String.format("Player %s opened a gift containing %s", player.getName(), player.getCurrentGift()));
+			Game.numSteals = 0;
 			Game.currentPlayerNum = (Game.currentPlayerNum == Game.players.size() - 1) ? 0 : Game.currentPlayerNum + 1;
 		}
 	}
