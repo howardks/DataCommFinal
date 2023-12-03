@@ -12,11 +12,11 @@ public class Server {
 		try (ServerSocket server = new ServerSocket(5332)) {
 			System.out.println("White Elephant server is running on port 5332...");
 
-			while (true) {
+			while (clients.size() < 3) {
 				Socket socket = server.accept();
 				Handler handler = new Handler(socket);
-				System.out.println(String.format("Client %d connected.", handler.myId));
 				clients.add(handler);
+				System.out.println(String.format("Client %d connected.", handler.myId));
 				handler.start();
 			}
 
