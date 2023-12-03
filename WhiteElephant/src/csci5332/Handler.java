@@ -32,15 +32,16 @@ public class Handler extends Thread {
 	@Override
 	public void run() {
 		try {
-
 			// Perform login tasks
 			player = Game.login(out, in);
 
+			// Display a waiting message until all players have joined
 			while (Game.gifts.size() < Server.totalPlayers) {
 				Server.sendMessage(String.format("Waiting on %d more players to join...", Server.totalPlayers - Game.players.size()));
 				TimeUnit.SECONDS.sleep(5);
 			}
 
+			// Begin the game
 			sendMessage("Starting game!");
 			TimeUnit.SECONDS.sleep(1);
 
@@ -50,7 +51,6 @@ public class Handler extends Thread {
 			}
 
 		} catch (Exception ex) {
-
 		} finally {
 			try {
 				out.close();
@@ -61,6 +61,7 @@ public class Handler extends Thread {
 	}
 
 	public void sendMessage(String message) {
+		// Send message to this client
 		out.println(message);
 	}
 }
