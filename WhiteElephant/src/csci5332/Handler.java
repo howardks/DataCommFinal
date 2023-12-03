@@ -1,4 +1,4 @@
-package current;
+package csci5332;
 
 import java.io.BufferedReader;
 import java.io.IOException;

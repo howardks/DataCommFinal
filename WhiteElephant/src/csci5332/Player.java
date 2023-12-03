@@ -1,11 +1,11 @@
-package old;
+package csci5332;
 
-public class User {
+public class Player {
 	private String name;
 	private String currentGift;
 
-	public User(String name) {
-		setName(name);
+	public Player(String name) {
+		setName(name.toLowerCase());
 		setCurrentGift("");
 	}
 

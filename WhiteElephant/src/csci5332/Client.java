@@ -1,4 +1,4 @@
-package old;
+package csci5332;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -6,6 +6,12 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class Client {
+	int id;
+
+	public Client(int id) {
+		this.id = id;
+	}
+
 	public static void main(String[] args) throws Exception {
 		Socket socket = new Socket("localhost", 5332);
 
@@ -16,28 +22,27 @@ public class Client {
 		BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
 		PrintWriter out = new PrintWriter(socket.getOutputStream());
 
-		// Perform login tasks
-		String serverText = in.readLine();
-		System.out.println(serverText);
-		String name = userInput.readLine().trim();
-		out.println(name);
-		out.flush();
-		serverText = in.readLine();
-		System.out.println(serverText);
-		String gift = userInput.readLine().trim();
-		out.println(gift);
-		out.flush();
+		String serverText;
 
 		// GameLoop
 		while (!Game.gameOver) {
-			serverText = in.readLine();
-			System.out.println(serverText);
+			while (in.ready()) {
+				serverText = in.readLine();
 
-			// TODO: Accepting input is not working here
-			String responseText = userInput.readLine().trim();
-			out.println(responseText);
-			out.flush();
+				if (serverText.startsWith("ID: ")) {
+					int id = Integer.parseInt(serverText.split(" ")[1]);
+					Client self = new Client(id);
+				} else {
+					System.out.println(serverText);
+				}
 
+				if (serverText.startsWith("Choose") || serverText.startsWith("Would") || serverText.startsWith("Who")
+						|| serverText.startsWith("Enter")) {
+					String responseText = userInput.readLine().trim();
+					out.println(responseText);
+					out.flush();
+				}
+			}
 		}
 
 		// Cleanup
