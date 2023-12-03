@@ -36,8 +36,8 @@ public class Handler extends Thread {
 			// Perform login tasks
 			player = Game.login(out, in);
 
-			while (Game.gifts.size() < 3) {
-				Server.sendMessage(String.format("Waiting on %d more players to join...", 3 - Game.players.size()));
+			while (Game.gifts.size() < Server.totalPlayers) {
+				Server.sendMessage(String.format("Waiting on %d more players to join...", Server.totalPlayers - Game.players.size()));
 				TimeUnit.SECONDS.sleep(5);
 			}
 
