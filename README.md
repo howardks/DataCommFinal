@@ -9,6 +9,7 @@ For this final project, we decided to create a networked game. We implemented th
 4.	If a gift is stolen, the player whom it was stolen from will open a gift from the pool or steal a gift from another player. They cannot steal back the gift that was stolen from them. 
 5.	If a gift has been stolen three times in a row, the last player whose gift was stolen must choose a gift from the pool. They cannot steal a gift.  
 6.	Once all players have a gift, the game ends.<br/><br/>
+
 Implementation<br/>
 Our game is implemented in Java using Socket programming. We began by using an assignment from CSCI 5332 which made use of Java Sockets to make calls to an API as an example of how Sockets can be used to pass information between a client and a server. Because this project is much larger than the assignment from class, it consists of five Java classes: Player, Client, Server, Handler, and Game. <br/>
 The simplest of the five classes is the Player class. It is an Object class that allows each user’s name and the gift currently in their possession to be tracked. <br/>
