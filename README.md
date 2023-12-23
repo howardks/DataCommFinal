@@ -1,7 +1,7 @@
 # Networked White Elephant
 Final project for CSCI5332
 
-Concept
+Concept<br/>
 For this final project, we decided to create a networked game. We implemented the White Elephant game, also known as Bad Santa or Dirty Santa. This is a variation on Secret Santa. We implemented the game according to the following rules: 
 1.	Each player brings one wrapped gift to a common pool. 
 2.	For the game's first turn, the first player selects a gift from the pool and opens it. 
